@@ -12,7 +12,10 @@ import com.ljx.pojo.vo.UserAccountInfoVO;
 import com.ljx.user.service.UserService;
 import com.ljx.utils.JsonUtils;
 import com.ljx.utils.RedisOperator;
+import com.netflix.hystrix.contrib.javanica.annotation.DefaultProperties;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.apache.commons.lang3.StringUtils;
+import org.checkerframework.checker.units.qual.A;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -20,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -28,11 +32,18 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@DefaultProperties(defaultFallback = "defaultFallback")
 public class UserController extends BaseController implements UserControllerApi {
 
     final static Logger logger = LoggerFactory.getLogger(UserController.class);
     @Autowired
     private UserService userService;
+
+
+    public GraceJSONResult defaultFallback() {
+        System.out.println("global hystrix");
+        return GraceJSONResult.errorCustom(ResponseStatusEnum.SYSTEM_ERROR_GLOBAL);
+    }
 
     @Override
     public GraceJSONResult getAccountInfo(String userId) {
@@ -61,13 +72,13 @@ public class UserController extends BaseController implements UserControllerApi 
     }
 
     @Override
-    public GraceJSONResult updateUserInfo(@Valid UpdateUserInfoBO updateUserInfoBO,
-                                          BindingResult result) {
-        // 0.判断BindingResult中是否保存了错误的验证信息，如果有，则需要返回
-        if (result.hasErrors()) {
-            Map<String, String> map = getErrors(result);
-            return GraceJSONResult.errorMap(map);
-        }
+    public GraceJSONResult updateUserInfo(@Valid UpdateUserInfoBO updateUserInfoBO){
+//                                          BindingResult result) {
+//        // 0.判断BindingResult中是否保存了错误的验证信息，如果有，则需要返回
+//        if (result.hasErrors()) {
+//            Map<String, String> map = getErrors(result);
+//            return GraceJSONResult.errorMap(map);
+//        }
         //1.执行更新操作
         userService.updateUserInfo(updateUserInfoBO);
         return GraceJSONResult.ok();
@@ -94,8 +105,18 @@ public class UserController extends BaseController implements UserControllerApi 
     @Value("${server.port}")
     private String myPort;
     //远程调用
+    @HystrixCommand
+    //@HystrixCommand(fallbackMethod = "queryByIdsFallback")
     @Override
     public GraceJSONResult queryByIds(String userIds) {
+        //1.trigger exception
+        //int a = 1/0;
+        //2.timeout exception
+        try {
+            Thread.sleep(6000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         System.out.println(myPort);
         if (StringUtils.isBlank(userIds)) {
             //为空
@@ -112,7 +133,23 @@ public class UserController extends BaseController implements UserControllerApi 
 
         return GraceJSONResult.ok(publishList);
     }
+    public GraceJSONResult queryByIdsFallback(String userIds) {
+        System.out.println("fallback method: queryByIdsFallback");
+        if (StringUtils.isBlank(userIds)) {
+            //为空
+            return GraceJSONResult.errorCustom(ResponseStatusEnum.USER_NOT_EXIST_ERROR);
+        }
+        List<AppUserVO> publishList = new ArrayList<>();
+        //将String转换成用户id的list
+        List<String> userIdList = JsonUtils.jsonToList(userIds,String.class);
+        for (String userId : userIdList) {
+            //create empty object for detail site
+            AppUserVO appUserVO = new AppUserVO();
+            publishList.add(appUserVO);
+        }
 
+        return GraceJSONResult.ok(publishList);
+    }
     /**
      *
      * @param userId 根据id在redis、数据库中查user信息

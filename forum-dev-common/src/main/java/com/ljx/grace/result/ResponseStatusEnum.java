@@ -68,8 +68,9 @@ public enum ResponseStatusEnum {
     // 系统错误，未预期的错误 555
     SYSTEM_ERROR(555, false, "系统繁忙，请稍后再试！"),
     SYSTEM_OPERATION_ERROR(556, false, "操作失败，请重试或联系管理员"),
-    SYSTEM_RESPONSE_NO_INFO(557, false, "");
-
+    SYSTEM_RESPONSE_NO_INFO(557, false, ""),
+    SYSTEM_ERROR_GLOBAL(555, false, "Global hystrix: system busy, please try again later!"),
+    SYSTEM_ERROR_FEIGN(555, false, "Client hystrix: system busy, please try again later!");
 
     // 响应业务状态
     private Integer status;
