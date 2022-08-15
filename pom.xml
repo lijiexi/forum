@@ -15,7 +15,8 @@
         <module>forum-dev-service-admin</module>
         <module>forum-dev-service-article</module>
         <module>forum-dev-service-files</module>
-        <module>spingcloud-eureka</module>
+        <module>springcloud-eureka</module>
+        <module>springcloud-eureka-cluster</module>
     </modules>
 
     <packaging>pom</packaging>

@@ -18,6 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
@@ -269,12 +271,25 @@ public class ArticlePortalController extends BaseController implements ArticlePo
         detailVO.setReadCounts(getCountsFromRedis(REDIS_ARTICLE_READ_COUNTS+":"+articleId));
         return GraceJSONResult.ok(detailVO);
     }
+    //get microservices info
+    @Autowired
+    private DiscoveryClient discoveryClient;
+
     //Use remote call to get userInfo
     private List<AppUserVO> getPublisherList(Set idSet) {
+
+        String serviceId = "SERVICE-USER";
+        List<ServiceInstance> instanceList = discoveryClient.getInstances(serviceId);
+        ServiceInstance userService = instanceList.get(0);
+        String userServerUrlExecute
+                = "http://"+userService.getHost()+":"+userService.getPort()+
+                "/user/queryByIds?userIds="+JsonUtils.objectToJson(idSet);
+
+
         //2.Initiate resttemplate to initiate a remote call, request user services, and get a list of users
 
-        String userServerUrlExecute
-                = "http://127.0.0.1:8003/user/queryByIds?userIds="+JsonUtils.objectToJson(idSet);
+//        String userServerUrlExecute
+//                = "http://127.0.0.1:8003/user/queryByIds?userIds="+JsonUtils.objectToJson(idSet);
         ResponseEntity<GraceJSONResult> resultResponseEntity
                 = restTemplate.getForEntity(userServerUrlExecute,GraceJSONResult.class);
         //get query results
