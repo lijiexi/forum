@@ -269,18 +269,16 @@ public class ArticlePortalController extends BaseController implements ArticlePo
         detailVO.setReadCounts(getCountsFromRedis(REDIS_ARTICLE_READ_COUNTS+":"+articleId));
         return GraceJSONResult.ok(detailVO);
     }
-    //使用远程调用，获得userInfo
+    //Use remote call to get userInfo
     private List<AppUserVO> getPublisherList(Set idSet) {
-        //2.发起resttemplate发起远程调用，请求用户服务，获得用户列表
-//        String userServerUrlExecute
-//                = "http://user.news.com:8003/user/queryByIds?userIds="+JsonUtils.objectToJson(idSet);
+        //2.Initiate resttemplate to initiate a remote call, request user services, and get a list of users
+
         String userServerUrlExecute
                 = "http://127.0.0.1:8003/user/queryByIds?userIds="+JsonUtils.objectToJson(idSet);
         ResponseEntity<GraceJSONResult> resultResponseEntity
                 = restTemplate.getForEntity(userServerUrlExecute,GraceJSONResult.class);
-        //获得查询结果
+        //get query results
         GraceJSONResult bodyResult = resultResponseEntity.getBody();
-        //System.out.println(bodyResult);
         List<AppUserVO> publishList = null;
         if (bodyResult.getStatus() == 200) {
             String userJson = JsonUtils.objectToJson(bodyResult.getData());
@@ -292,7 +290,7 @@ public class ArticlePortalController extends BaseController implements ArticlePo
     @Override
     public GraceJSONResult readArticle(String articleId,
                                        HttpServletRequest request) {
-        //防止阅读量被刷
+        //Prevent reading counts from being brushed
         String userIp = IPUtil.getRequestIp(request);
         redis.setnx(REDIS_ALREADY_READ+":"+articleId+":"+userIp,userIp);
         redis.increment(REDIS_ARTICLE_READ_COUNTS+":"+articleId,1);
@@ -301,14 +299,15 @@ public class ArticlePortalController extends BaseController implements ArticlePo
 
 
     /**
-     * 从redis获取阅读量、远程调用获取作者昵称和头像，重组文章信息
+     * Get the reading volume from redis,
+     * get the author's nickname and avatar by remote call, and reorganize the article information
      */
     private PagedGridResult rebuildArticleGrid(PagedGridResult gridResult) {
         // START
 
         List<ArticleEO> list = (List<ArticleEO>)gridResult.getRows();
 
-        // 1. 构建发布者id列表
+        // 1. Build a list of publisher ids
         Set<String> idSet = new HashSet<>();
         List<String> idList = new ArrayList<>();
         for (ArticleEO a : list) {

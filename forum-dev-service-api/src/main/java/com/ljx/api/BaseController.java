@@ -114,16 +114,14 @@ public class BaseController {
         return  Integer.valueOf(countsStr);
     }
     public List<AppUserVO> getBasicUserList(Set idSet) {
-        //2.发起resttemplate发起远程调用，请求用户服务，获得用户列表
-//        String userServerUrlExecute
-//                = "http://user.news.com:8003/user/queryByIds?userIds="+JsonUtils.objectToJson(idSet);
+        //2.Initiate resttemplate to initiate a remote call, request user services, and get a list of users
         String userServerUrlExecute
                 = "http://127.0.0.1:8003/user/queryByIds?userIds="+ JsonUtils.objectToJson(idSet);
         ResponseEntity<GraceJSONResult> resultResponseEntity
                 = restTemplate.getForEntity(userServerUrlExecute,GraceJSONResult.class);
-        //获得查询结果
+
+        //get query results
         GraceJSONResult bodyResult = resultResponseEntity.getBody();
-        //System.out.println(bodyResult);
         List<AppUserVO> userVOList = null;
         if (bodyResult.getStatus() == 200) {
             String userJson = JsonUtils.objectToJson(bodyResult.getData());
