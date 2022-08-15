@@ -112,11 +112,11 @@ public class UserController extends BaseController implements UserControllerApi 
         //1.trigger exception
         //int a = 1/0;
         //2.timeout exception
-        try {
-            Thread.sleep(6000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            Thread.sleep(6000);
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
         System.out.println(myPort);
         if (StringUtils.isBlank(userIds)) {
             //为空
@@ -125,6 +125,13 @@ public class UserController extends BaseController implements UserControllerApi 
         List<AppUserVO> publishList = new ArrayList<>();
         //将String转换成用户id的list
         List<String> userIdList = JsonUtils.jsonToList(userIds,String.class);
+
+        //dev test
+        if(userIdList.size() > 1) {
+            System.out.println("appear exception");
+            throw new RuntimeException("appear exception");
+        }
+
         for (String userId : userIdList) {
             //获得基本信息
             AppUserVO appUserVO = getBasicUserInfo(userId);

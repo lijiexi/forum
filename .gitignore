@@ -22,5 +22,6 @@ gen
 /springcloud-eureka/target/
 /springcloud-eureka-cluster/target/
 /target/
+/springcloud-zuul-server/target/
 *.yml
 *.properties

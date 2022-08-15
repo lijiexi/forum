@@ -17,6 +17,7 @@
         <module>forum-dev-service-files</module>
         <module>springcloud-eureka</module>
         <module>springcloud-eureka-cluster</module>
+        <module>springcloud-zuul-server</module>
     </modules>
 
     <packaging>pom</packaging>
