@@ -4,7 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.ljx.utils.PagedGridResult;
 import com.ljx.utils.RedisOperator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.mapping.Document;
+//import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 

@@ -66,12 +66,11 @@
             </dependency>
 
             <!-- 引入 mongodb 依赖 -->
-            <dependency>
-                <groupId>org.mongodb</groupId>
-                <artifactId>mongodb-driver</artifactId>
-                <!--mongodb-driver.version-->
-                <version>3.11.1</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.mongodb</groupId>-->
+<!--                <artifactId>mongodb-driver</artifactId>-->
+<!--                <version>3.11.1</version>-->
+<!--            </dependency>-->
 
             <!-- mysql 驱动 -->
             <dependency>

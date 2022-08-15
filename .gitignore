@@ -19,6 +19,8 @@ gen
 /mybatis-generator-database/
 /forum-dev-service-admin/target/
 /forum-dev-service-files/target/
+/springcloud-eureka/target/
+/springcloud-eureka-cluster/target/
 /target/
 *.yml
 *.properties

@@ -1,5 +1,6 @@
 package com.ljx.api.config;
 
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.OkHttp3ClientHttpRequestFactory;
@@ -9,7 +10,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 /**
- * 服务之间远程调用
+ * Remote call between microservices
  */
 @Configuration
 public class CloudConfig {
@@ -18,9 +19,10 @@ public class CloudConfig {
     }
 
     /**
-     * 基于OKHttp3配置RestTemplate
+     * Configure RestTemplate based on OKHttp3
      */
     @Bean
+    @LoadBalanced //round robin
     public RestTemplate restTemplate() {
         return new RestTemplate(new OkHttp3ClientHttpRequestFactory());
     }
