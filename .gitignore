@@ -1,0 +1,24 @@
+### Example user template template
+### Example user template
+
+# IntelliJ project files
+.idea
+*.iml
+out
+gen
+*.class
+*.log
+*.jar
+*.war
+.DS_Store
+/forum-dev-common/target/
+/forum-dev-model/target/
+/forum-dev-service-api/target/
+/forum-dev-service-user/target/
+/forum-dev-service-article/target/
+/mybatis-generator-database/
+/forum-dev-service-admin/target/
+/forum-dev-service-files/target/
+/target/
+*.yml
+*.properties
