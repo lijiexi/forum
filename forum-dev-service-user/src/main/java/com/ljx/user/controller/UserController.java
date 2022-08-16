@@ -15,21 +15,16 @@ import com.ljx.utils.RedisOperator;
 import com.netflix.hystrix.contrib.javanica.annotation.DefaultProperties;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.apache.commons.lang3.StringUtils;
-import org.checkerframework.checker.units.qual.A;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @DefaultProperties(defaultFallback = "defaultFallback")
@@ -105,8 +100,8 @@ public class UserController extends BaseController implements UserControllerApi 
     @Value("${server.port}")
     private String myPort;
     //远程调用
-    @HystrixCommand
-    //@HystrixCommand(fallbackMethod = "queryByIdsFallback")
+    //@HystrixCommand
+    @HystrixCommand(fallbackMethod = "queryByIdsFallback")
     @Override
     public GraceJSONResult queryByIds(String userIds) {
         //1.trigger exception
@@ -127,10 +122,10 @@ public class UserController extends BaseController implements UserControllerApi 
         List<String> userIdList = JsonUtils.jsonToList(userIds,String.class);
 
         //dev test
-        if(userIdList.size() > 1) {
-            System.out.println("appear exception");
-            throw new RuntimeException("appear exception");
-        }
+//        if(userIdList.size() > 1) {
+//            System.out.println("appear exception");
+//            throw new RuntimeException("appear exception");
+//        }
 
         for (String userId : userIdList) {
             //获得基本信息
